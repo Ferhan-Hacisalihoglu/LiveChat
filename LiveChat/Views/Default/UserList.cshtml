@@ -1,0 +1,15 @@
+﻿@using LiveChat.Models
+@model List<Person>
+
+@{
+    ViewBag.Title = "UserList";
+}
+
+@foreach (Person person in Model)
+{
+    @Html.Raw($"<a href='{Url.Action("Message", "Default", new { otherId = person.Id })}' style = \"text-decoration:none\";> <h2>{person.userName}</h2> </a>")
+    <br />
+}
+
+
+

@@ -1,0 +1,124 @@
+﻿@using LiveChat.Models
+@model ChatViewModel
+
+@{
+    ViewBag.Title = "Message";
+}
+
+<h2>@Model.otherName</h2>
+<br />
+@if (ViewBag.error != null)
+{
+    <br />
+    <div style="color:red ; text-align:center;"> @ViewBag.error </div>
+}
+<br />
+
+@using (Html.BeginForm("Message", "Default", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.otherId, new { otherId = Model.otherId })
+
+    <div class="row">
+        <div class="col-6">
+            @Html.TextBox("newMessage", null, new { @type = "text", @required = "required", @placeholder = "Gerekli", @maxlength = "200", @class = "form-control", id = "newMessage" })
+        </div>
+        <div class="col-6">
+            <input type="submit" class="btn btn-success btn-block" value="Mesajı Yolla" />
+        </div>
+    </div>
+
+    <br />
+}
+
+<div id="messageContainer">
+
+</div>
+
+<script>
+
+    var otherUserId = @Model.otherId;
+    var page = 1;
+    var isLoading = false;
+    let lastCheckDate;
+
+    $(document).ready(function () {
+        lastCheckDate = new Date();
+
+        clearTextBox()
+
+        function clearTextBox() {
+            document.getElementById('newMessage').value = null;
+        }
+
+        function fetchMessages() {
+            if (isLoading) return;
+
+            isLoading = true;
+
+            $.ajax({
+                url: '/Default/GetMessages',
+                type: 'GET',
+                data: { otherId: otherUserId , page: page },
+                success: function (data) {
+                    if (data.length > 0) {
+                        data.forEach(function (chat) {
+                            if (chat.toUserId == otherUserId) {
+                                $('#messageContainer').append(
+                                    '<p class="right-align">' + chat.message + '</p>'
+                                );
+                            }
+                            else {
+                                $('#messageContainer').append(
+                                    '<p>' + chat.message + '</p>'
+                                );
+                            }
+                        });
+                    }
+                    isLoading = false;
+                },
+                error: function (error) {
+                    console.error("Error fetching messages", error);
+                    isLoading = false;
+                }
+            });
+        }
+
+        fetchMessages();
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() == $(document).height() && !isLoading) {
+                page++;
+                fetchMessages();
+            }
+        });
+
+        function pollForNewMessages() {
+            if (isLoading) return;
+
+            isLoading = true;
+
+            $.ajax({
+                url: '/Default/GetLastMessage',
+                type: 'GET',
+                data: { otherId: otherUserId },
+                success: function (data) {
+                    var chatDate = new Date(parseInt(data.date.substr(6)));
+                    if (lastCheckDate.getTime() < chatDate.getTime()) {
+                        $('#messageContainer').prepend(
+                            '<p>' + data.message + '</p>'
+                        );
+                    }
+                    isLoading = false;
+                    lastCheckDate = new Date();
+                },
+                error: function (error) {
+                    console.error("Error fetching messages", error);
+                    isLoading = false;
+                    lastCheckDate = new Date();
+                }
+            });
+        }
+
+        setInterval(pollForNewMessages, 5000);
+    });
+</script>

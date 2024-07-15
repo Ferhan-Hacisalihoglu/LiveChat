@@ -1,0 +1,19 @@
+﻿@model LiveChat.Models.Person
+
+@{
+    ViewBag.Title = "Login";
+}
+
+@using (Html.BeginForm("Login", "Default", FormMethod.Post))
+{
+    <br />
+
+    <h5>Kullanıcı Adı</h5>
+    @Html.TextBoxFor(x => x.userName,new { @type = "text", @required = "required", @placeholder = "Gerekli", @maxlength = "30", @class = "form-control" })
+
+    <br />
+
+    <input type="submit" class="btn btn-primary" value="Giriş Yap" />
+
+}
+
