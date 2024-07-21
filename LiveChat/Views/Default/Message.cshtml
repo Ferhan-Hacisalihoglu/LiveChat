@@ -16,7 +16,7 @@
 
 @using (Html.BeginForm("Message", "Default", FormMethod.Post))
 {
-    @Html.HiddenFor(x => x.otherId, new { otherId = Model.otherId })
+    @Html.HiddenFor(x => x.otherId)
 
     <div class="row">
         <div class="col-6">
@@ -27,12 +27,16 @@
         </div>
     </div>
 
-    <br />
+    <hr />
 }
+
+<br />
 
 <div id="messageContainer">
 
 </div>
+
+<br />
 
 <script>
 
@@ -64,12 +68,12 @@
                         data.forEach(function (chat) {
                             if (chat.toUserId == otherUserId) {
                                 $('#messageContainer').append(
-                                    '<p class="right-align">' + chat.message + '</p>'
+                                    '<div class="message left"> <div class="message-body">' + chat.message + '</div> </div>'
                                 );
                             }
                             else {
                                 $('#messageContainer').append(
-                                    '<p>' + chat.message + '</p>'
+                                    '<div class="message right"> <div class="message-body">' + chat.message + '</div> </div>'
                                 );
                             }
                         });
@@ -100,12 +104,12 @@
             $.ajax({
                 url: '/Default/GetLastMessage',
                 type: 'GET',
-                data: { otherId: otherUserId },
+                data: { otherId: otherUserId},
                 success: function (data) {
                     var chatDate = new Date(parseInt(data.date.substr(6)));
                     if (lastCheckDate.getTime() < chatDate.getTime()) {
                         $('#messageContainer').prepend(
-                            '<p>' + data.message + '</p>'
+                            '<div class="message right"> <div class="message-body">' + data.message + '</div> </div>'
                         );
                     }
                     isLoading = false;

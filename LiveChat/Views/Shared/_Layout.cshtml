@@ -6,11 +6,36 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+
     <style>
-        .right-align {
-            text-align: right;
+        .message {
+            margin: 10px;
         }
+
+            .message.left {
+                text-align: left;
+            }
+
+            .message.right {
+                text-align: right;
+            }
+
+            .message .message-body {
+                padding: 10px;
+                border-radius: 10px;
+                color: white;
+                display:inline-block;
+            }
+
+            .message.left .message-body {
+                background-color: #198754;
+            }
+
+            .message.right .message-body {
+                background-color: #0d6efd;
+            }
     </style>
+
 </head>
 <body>
 

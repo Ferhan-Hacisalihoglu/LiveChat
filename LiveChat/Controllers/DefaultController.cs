@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -80,6 +82,11 @@ namespace LiveChat.Controllers
             Person person1 = db.personTable.FirstOrDefault(x => x.userName == HttpContext.User.Identity.Name);
             Person person2 = db.personTable.FirstOrDefault(x => x.Id == otherId);
 
+            if (person1 == person2)
+            {
+                return RedirectToAction("UserList", "Default");
+            }
+
             ChatViewModel viewModel = new ChatViewModel();
             viewModel.otherName = person2.userName;
             viewModel.otherId = otherId;
@@ -141,9 +148,7 @@ namespace LiveChat.Controllers
             Person person2 = db.personTable.FirstOrDefault(x => x.Id == otherId);
 
             Chat lastMessage = person2.chatTable
-                .Where(x => x.toUserId == person1.Id)
-                .OrderByDescending(x => x.date)
-                .FirstOrDefault();
+                .Where(x => x.toUserId == person1.Id).OrderByDescending(x => x.date).FirstOrDefault();
 
             return Json(lastMessage, JsonRequestBehavior.AllowGet);
         }
