@@ -126,6 +126,11 @@ namespace LiveChat.Controllers
             Person person1 = db.personTable.FirstOrDefault(x => x.userName == HttpContext.User.Identity.Name);
             Person person2 = db.personTable.FirstOrDefault(x => x.Id == otherId);
 
+            if (person1 == person2)
+            {
+                return RedirectToAction("UserList", "Default");
+            }
+
             int pageSize = 50;
 
             List<Chat> messagesFromPerson1 = person1.chatTable
